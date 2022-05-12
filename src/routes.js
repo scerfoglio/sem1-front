@@ -35,9 +35,13 @@ Coded by www.creative-tim.com
   10. The `component` key is used to store the component of its route.
 */
 
+/* eslint-disable */
+
 // Material Dashboard 2 React layouts
 import Dashboard from "layouts/dashboard";
 import Tables from "layouts/tables";
+import Projects from "layouts/projects";
+import Users from "layouts/users";
 import Billing from "layouts/billing";
 import RTL from "layouts/rtl";
 import Notifications from "layouts/notifications";
@@ -59,60 +63,76 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Tables",
-    key: "tables",
-    icon: <Icon fontSize="small">table_view</Icon>,
-    route: "/tables",
-    component: <Tables />,
+    name: "Proyectos",
+    key: "projects",
+    icon: <Icon fontSize="small">account_tree</Icon>,
+    route: "/projects",
+    component: <Projects />,
   },
   {
     type: "collapse",
-    name: "Billing",
-    key: "billing",
-    icon: <Icon fontSize="small">receipt_long</Icon>,
-    route: "/billing",
-    component: <Billing />,
+    name: "Usuarios",
+    key: "users",
+    icon: <Icon fontSize="small">group</Icon>,
+    route: "/users",
+    component: <Users />,
   },
-  {
-    type: "collapse",
-    name: "RTL",
-    key: "rtl",
-    icon: <Icon fontSize="small">format_textdirection_r_to_l</Icon>,
-    route: "/rtl",
-    component: <RTL />,
-  },
-  {
-    type: "collapse",
-    name: "Notifications",
-    key: "notifications",
-    icon: <Icon fontSize="small">notifications</Icon>,
-    route: "/notifications",
-    component: <Notifications />,
-  },
-  {
-    type: "collapse",
-    name: "Profile",
-    key: "profile",
-    icon: <Icon fontSize="small">person</Icon>,
-    route: "/profile",
-    component: <Profile />,
-  },
-  {
-    type: "collapse",
-    name: "Sign In",
-    key: "sign-in",
-    icon: <Icon fontSize="small">login</Icon>,
-    route: "/authentication/sign-in",
-    component: <SignIn />,
-  },
-  {
-    type: "collapse",
-    name: "Sign Up",
-    key: "sign-up",
-    icon: <Icon fontSize="small">assignment</Icon>,
-    route: "/authentication/sign-up",
-    component: <SignUp />,
-  },
+//   {
+//     type: "collapse",
+//     name: "Tables",
+//     key: "tables",
+//     icon: <Icon fontSize="small">table_view</Icon>,
+//     route: "/tables",
+//     component: <Tables />,
+//    },
+//   {
+//     type: "collapse",
+//     name: "Billing",
+//     key: "billing",
+//     icon: <Icon fontSize="small">receipt_long</Icon>,
+//     route: "/billing",
+//     component: <Billing />,
+//   },
+//   {
+//     type: "collapse",
+//     name: "RTL",
+//     key: "rtl",
+//     icon: <Icon fontSize="small">format_textdirection_r_to_l</Icon>,
+//     route: "/rtl",
+//     component: <RTL />,
+//   },
+//   {
+//     type: "collapse",
+//     name: "Notifications",
+//     key: "notifications",
+//     icon: <Icon fontSize="small">notifications</Icon>,
+//     route: "/notifications",
+//     component: <Notifications />,
+//   },
+//   {
+//     type: "collapse",
+//     name: "Profile",
+//     key: "profile",
+//     icon: <Icon fontSize="small">person</Icon>,
+//     route: "/profile",
+//     component: <Profile />,
+//   },
+//   {
+//     type: "collapse",
+//     name: "Sign In",
+//     key: "sign-in",
+//     icon: <Icon fontSize="small">login</Icon>,
+//     route: "/authentication/sign-in",
+//     component: <SignIn />,
+//   },
+//   {
+//     type: "collapse",
+//     name: "Sign Up",
+//     key: "sign-up",
+//     icon: <Icon fontSize="small">assignment</Icon>,
+//     route: "/authentication/sign-up",
+//     component: <SignUp />,
+//   },
 ];
 
 export default routes;

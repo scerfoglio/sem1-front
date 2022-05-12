@@ -13,6 +13,8 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
+/* eslint-disable */
+
 // @mui material components
 import Grid from "@mui/material/Grid";
 
@@ -41,7 +43,7 @@ function Dashboard() {
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <MDBox py={3}>
+      {/* <MDBox py={3}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
@@ -154,8 +156,7 @@ function Dashboard() {
             </Grid>
           </Grid>
         </MDBox>
-      </MDBox>
-      <Footer />
+      </MDBox> */}
     </DashboardLayout>
   );
 }

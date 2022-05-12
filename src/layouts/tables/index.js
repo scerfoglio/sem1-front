@@ -38,7 +38,7 @@ function Tables() {
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <MDBox pt={6} pb={3}>
+      <MDBox pt={6} pb={30}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
