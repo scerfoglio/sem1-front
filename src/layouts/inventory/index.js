@@ -42,7 +42,7 @@ import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
 
 // Data
-import authorsTableData from "layouts/users/data/authorsTableData";
+import authorsTableData from "layouts/inventory/data/authorsTableData";
 
 const style = {
     position: 'absolute',
@@ -81,12 +81,12 @@ function Users() {
               >
                 <Stack direction="row" spacing={2}>
                     <MDTypography variant="h6" color="white">
-                        Usuarios
+                        Inventario
                     </MDTypography>
                 </Stack>
                 <Stack direction="row-reverse" spacing={2}>
                     <Button variant="contained" color="success" onClick={handleOpen}>
-                        Nuevo Usuario
+                        Nuevo Reactivo
                     </Button>
                     <Modal open={open} onClose={handleClose}>
                         <Box sx={style}>
@@ -103,7 +103,7 @@ function Users() {
                                     textAlign="center"
                                 >
                                     <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
-                                        Nuevo Usuario
+                                        Nuevo Reactivo
                                     </MDTypography>
                                 </MDBox>
                                 <MDBox pt={4} pb={3} px={3}>
@@ -112,14 +112,17 @@ function Users() {
                                             <MDInput type="text" label="Nombre" variant="standard" fullWidth />
                                         </MDBox>
                                         <MDBox mb={2}>
-                                            <MDInput type="text" label="Funcion" variant="standard" fullWidth />
+                                            <MDInput type="text" label="Estado" variant="standard" fullWidth />
                                         </MDBox>
                                         <MDBox mb={2}>
-                                            <MDInput type="text" label="Descripcion" variant="standard" fullWidth />
+                                            <MDInput type="text" label="Cantidad" variant="standard" fullWidth />
+                                        </MDBox>
+                                        <MDBox mb={2}>
+                                            <MDInput type="text" label="Unidad de medida" variant="standard" fullWidth />
                                         </MDBox>
                                         <MDBox mt={4} mb={1}>
                                             <MDButton variant="gradient" color="info" fullWidth>
-                                                Crear Usuario
+                                                Cargar reactivo
                                             </MDButton>
                                         </MDBox>
                                     </MDBox>

@@ -41,7 +41,7 @@ Coded by www.creative-tim.com
 import Dashboard from "layouts/dashboard";
 import Tables from "layouts/tables";
 import Projects from "layouts/projects";
-import Users from "layouts/users";
+import Inventory from "layouts/inventory";
 import Billing from "layouts/billing";
 import RTL from "layouts/rtl";
 import Notifications from "layouts/notifications";
@@ -71,11 +71,11 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Usuarios",
-    key: "users",
-    icon: <Icon fontSize="small">group</Icon>,
-    route: "/users",
-    component: <Users />,
+    name: "Inventario",
+    key: "inventory",
+    icon: <Icon fontSize="small">vaccines</Icon>,
+    route: "/inventory",
+    component: <Inventory />,
   },
 //   {
 //     type: "collapse",

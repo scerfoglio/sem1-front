@@ -26,41 +26,40 @@ import MDAvatar from "components/MDAvatar";
 // import team2 from "assets/images/team-2.jpg";
 // import team3 from "assets/images/team-3.jpg";
 // import team4 from "assets/images/team-4.jpg";
-import appleIcon from "assets/images/apple-icon.png";
+import appleIcon from "assets/images/bacteria.png";
 
 export default function data() {
-  const Author = ({ image, name, email }) => (
+  const Reactive = ({ image, name, composition }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>
       <MDAvatar src={image} name={name} size="sm" />
       <MDBox ml={2} lineHeight={1}>
         <MDTypography display="block" variant="button" fontWeight="medium">
           {name}
         </MDTypography>
-        <MDTypography variant="caption">{email}</MDTypography>
+        <MDTypography variant="caption">{composition}</MDTypography>
       </MDBox>
     </MDBox>
   );
 
-  const Job = ({ title, description }) => (
+  const Availability = ({ qty }) => (
     <MDBox lineHeight={1} textAlign="left">
       <MDTypography display="block" variant="caption" color="text" fontWeight="medium">
-        {title}
+        {qty}
       </MDTypography>
-      <MDTypography variant="caption">{description}</MDTypography>
     </MDBox>
   );
 
   return {
     columns: [
-      { Header: "Usuario", accessor: "author", width: "45%", align: "left" },
-      { Header: "Funcion", accessor: "function", align: "left" },
+      { Header: "Nombre", accessor: "author", width: "45%", align: "left" },
+      { Header: "Disponibilidad", accessor: "availability", align: "left" },
       { Header: "Acciones", accessor: "action", align: "center" },
     ],
 
     rows: [
       {
-        author: <Author image={appleIcon} name="Santiago Cerfoglio" email="scerfoglio@uade.edu.ar" />,
-        function: <Job title="Investigador" description="Investigador Graduado" />,
+        author: <Reactive image={appleIcon} name="Astaxantina" composition="Líquido" />,
+        availability: <Availability qty="100mg" />,
         action: (
           <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
             Edit
@@ -68,8 +67,8 @@ export default function data() {
         ),
       },
       {
-        author: <Author image={appleIcon} name="Ivan Chan" email="ichan@uade.edu.ar" />,
-        function: <Job title="Ayudante" description="Investigador Estudiante" />,
+        author: <Reactive image={appleIcon} name="Fucoxantina" composition="Líquido" />,
+        availability: <Availability qty="100mg" />,
         action: (
           <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
             Edit
@@ -77,8 +76,8 @@ export default function data() {
         ),
       },
       {
-        author: <Author image={appleIcon} name="Diego Cibeira" email="dcibeira@uade.edu.ar" />,
-        function: <Job title="Investigador" description="Investigador Graduado" />,
+        author: <Reactive image={appleIcon} name="Fucoxantinol" composition="Líquido" />,
+        availability: <Availability qty="100mg" />,
         action: (
           <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
             Edit
@@ -86,8 +85,8 @@ export default function data() {
         ),
       },
       {
-        author: <Author image={appleIcon} name="Christian Digiorno" email="cdigiorno@uade.edu.ar" />,
-        function: <Job title="Investigador" description="Investigador Graduado" />,
+        author: <Reactive image={appleIcon} name="rBC2LCN" composition="Líquido" />,
+        availability: <Availability qty="100mg" />,
         action: (
           <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
             Edit
@@ -95,8 +94,8 @@ export default function data() {
         ),
       },
       {
-        author: <Author image={appleIcon} name="Ignacio Fontana" email="ifontana@uade.edu.ar" />,
-        function: <Job title="Investigador" description="Lider de equipo" />,
+        author: <Reactive image={appleIcon} name="Dicamba" composition="Líquido" />,
+        availability: <Availability qty="100mg" />,
         action: (
           <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
             Edit
@@ -104,8 +103,8 @@ export default function data() {
         ),
       },
       {
-        author: <Author image={appleIcon} name="Cristian Merenda" email="cmerenda@uade.edu.ar" />,
-        function: <Job title="Investigador" description="Investigador Estudiante" />,
+        author: <Reactive image={appleIcon} name="Sericina" composition="Líquido" />,
+        availability: <Availability qty="100mg" />,
         action: (
           <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
             Edit
@@ -113,8 +112,8 @@ export default function data() {
         ),
       },
       {
-        author: <Author image={appleIcon} name="Santiago Otero" email="sotero@uade.edu.ar" />,
-        function: <Job title="Investigador" description="Investigador Graduado" />,
+        author: <Reactive image={appleIcon} name="Biotina BTL-104 Phos-tag™" composition="Líquido" />,
+        availability: <Availability qty="100mg" />,
         action: (
           <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
             Edit
