@@ -44,6 +44,10 @@ import DataTable from "examples/Tables/DataTable";
 // Data
 import authorsTableData from "layouts/inventory/data/authorsTableData";
 
+//Buscador
+import UnstyledInputBasic from "./buscador";
+
+
 const style = {
     position: 'absolute',
     top: '50%',
@@ -59,8 +63,14 @@ const style = {
 function Users() {
   const { columns, rows } = authorsTableData();
   const [open, setOpen] = React.useState((false));
-  const handleOpen = () => setOpen(true);
-  const handleClose =() => setOpen(false);
+
+  const [reactivos, setReactivos] = React.useState([]);
+
+
+  function getReactivos() {
+    fetch("http://localhost:4000/api/inventarios").then(response => response.json()).then(data => {console.log(data); setReactivos(data);})
+    }
+
 
   return (
     <DashboardLayout>
@@ -85,51 +95,12 @@ function Users() {
                     </MDTypography>
                 </Stack>
                 <Stack direction="row-reverse" spacing={2}>
-                    <Button variant="contained" color="success" onClick={handleOpen}>
-                        Nuevo Reactivo
+                    <Button variant="contained" color="success" >
+                        Buscar Reactivo
                     </Button>
-                    <Modal open={open} onClose={handleClose}>
-                        <Box sx={style}>
-                            <Card>
-                                <MDBox
-                                    variant="gradient"
-                                    bgColor="info"
-                                    borderRadius="lg"
-                                    coloredShadow="success"
-                                    mx={2}
-                                    mt={-3}
-                                    p={3}
-                                    mb={1}
-                                    textAlign="center"
-                                >
-                                    <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
-                                        Nuevo Reactivo
-                                    </MDTypography>
-                                </MDBox>
-                                <MDBox pt={4} pb={3} px={3}>
-                                    <MDBox component="form" role="form">
-                                        <MDBox mb={2}>
-                                            <MDInput type="text" label="Nombre" variant="standard" fullWidth />
-                                        </MDBox>
-                                        <MDBox mb={2}>
-                                            <MDInput type="text" label="Estado" variant="standard" fullWidth />
-                                        </MDBox>
-                                        <MDBox mb={2}>
-                                            <MDInput type="text" label="Cantidad" variant="standard" fullWidth />
-                                        </MDBox>
-                                        <MDBox mb={2}>
-                                            <MDInput type="text" label="Unidad de medida" variant="standard" fullWidth />
-                                        </MDBox>
-                                        <MDBox mt={4} mb={1}>
-                                            <MDButton variant="gradient" color="info" fullWidth>
-                                                Cargar reactivo
-                                            </MDButton>
-                                        </MDBox>
-                                    </MDBox>
-                                </MDBox>
-                            </Card>
-                        </Box>
-                    </Modal>
+                    <MDBox pr={1}>
+                          <UnstyledInputBasic/>
+                    </MDBox>
                 </Stack>
               </MDBox>
               <MDBox pt={3}>
