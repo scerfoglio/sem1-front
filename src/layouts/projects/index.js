@@ -27,6 +27,11 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Stack";
 import Modal from "@mui/material/Modal";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import ScienceIcon from '@mui/icons-material/Science';
 import Accordion from '@mui/material/Accordion';
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -54,6 +59,7 @@ import DataTable from "examples/Tables/DataTable";
 // Data
 import projectsTableData from "layouts/projects/data/projectsTableData";
 import { AccordionDetails, AccordionSummary } from '@mui/material';
+import { ConstructionOutlined } from '@mui/icons-material';
 
 const style = {
     position: 'absolute',
@@ -117,6 +123,13 @@ function Projects() {
   ]);
   const handleOpen = () => setOpen(true);
   const handleClose =() => setOpen(false);
+  const [insumosModal, setInsumosModal] = React.useState(false);
+  const handleInsumosModalOpen = (proyecto) => {setInsumosModal(true); setInsumosProyecto(proyecto);};
+  const handleInsumosModalClose = () => {setInsumosModal(false); setInsumosProyecto(""); setInsumosNombre(""); setInsumosCantidad(""); setInsumosUnidad("")};
+  const [insumosNombre, setInsumosNombre] = React.useState("");
+  const [insumosCantidad, setInsumosCantidad] = React.useState("");
+  const [insumosUnidad, setInsumosUnidad] = React.useState("");
+  const [insumosProyecto, setInsumosProyecto] = React.useState("");
 
   function getProyectos() {
     fetch("http://localhost:4000/api/proyecto").then(response => response.json()).then(data => {console.log(data); setProyectos(data);})
@@ -126,6 +139,17 @@ function Projects() {
     getProyectos()
     }, [])
 
+  const handleInsumosNombre = (event) => {
+    setInsumosNombre(event.target.value);
+  }
+
+  const handleInsumosCantidad = (event) => {
+    setInsumosCantidad(event.target.value);
+  }
+
+  const handleInsumosUnidad = (event) => {
+    setInsumosUnidad(event.target.value);
+  }
 
   const handleNombreProyecto = (event) => {
       setNombreProyecto(event.target.value);
@@ -175,7 +199,8 @@ function Projects() {
         campo_accion: campoDeAccion,
         descripcion: descripcion,
         fecha_inicio: fechaInicio,
-        usuarios: usuarios
+        usuarios: usuarios,
+        insumos: []
     }
 
     setProyectos([...proyectos, proyecto]);
@@ -191,9 +216,21 @@ function Projects() {
     })
   }
 
+  function handleInsumosSubmit() {
+    let insumoPOST = {proyecto: insumosProyecto, nombre: insumosNombre, cantidad: insumosCantidad, unidad: insumosUnidad};
+    let insumo = {nombre: insumosNombre, cantidad: insumosCantidad, unidad: insumosUnidad};
+    let proyectoAAgregar = JSON.parse(JSON.stringify(proyectos.find(proyecto => proyecto._id === insumosProyecto)));
+    proyectoAAgregar.insumos.push(insumo)
+    const updatedProyectos = proyectos.map(proyecto => {
+      if (proyecto._id === proyectoAAgregar._id) { return proyectoAAgregar; }
+      return proyecto;
+    })
+    setProyectos(updatedProyectos);
+    handleInsumosModalClose();
+  }
+
   return (
     <DashboardLayout>
-        {console.log(proyectos)}
       <DashboardNavbar />
       <MDBox pt={6} pb={30}>
         <Grid container spacing={6}>
@@ -352,6 +389,27 @@ function Projects() {
                                   </Grid>
                                 </Grid>
                           </Stack>
+                          <Stack direction="row" alignItems="center" justifyContent="space-between">
+                                <Grid container>
+                                  <Grid item xs>
+                                    <b>Insumos:</b>
+                                  </Grid>
+                                  <Divider orientation="vertical" flexItem />
+                                  <Grid item xs>
+                                    <Button variant="contained" color="success" onClick={() => handleInsumosModalOpen(proyecto._id)} sx={{ backgroundColor: "#66bb6a", color:"#000000" }}>Agregar Insumo</Button>
+                                  </Grid>
+                                </Grid>
+                          </Stack>
+                          <Stack direction="row" alignItems="center" mb={5}>
+                            <List>
+                              {proyecto.insumos.map((insumo, index) => {
+                                return <ListItem>
+                                  <ListItemIcon><ScienceIcon /></ListItemIcon>
+                                  <ListItemText primary={insumo.nombre + " " + insumo.cantidad + insumo.unidad}/>
+                                </ListItem>
+                              })}
+                            </List>
+                          </Stack>
                           <Stack direction="row" alignItems="center" mb={5}>
                               <Typography>Miembros:</Typography>
                               {proyecto.usuarios.map((usuario, index) => {
@@ -365,6 +423,45 @@ function Projects() {
                       </> 
                   })}
               </MDBox>
+              <Modal open={insumosModal} onClose={handleInsumosModalClose}>
+                <Box sx={style}>
+                  <Card>
+                    <MDBox
+                      variant="gradient"
+                      bgColor="info"
+                      borderRadius="lg"
+                      coloredShadow="success"
+                      mx={2}
+                      mt={-3}
+                      p={3}
+                      mb={1}
+                      textAlign="center"
+                    >
+                      <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
+                        Nuevo Insumo
+                      </MDTypography>
+                    </MDBox>
+                    <MDBox pt={4} pb={3} px={3}>
+                      <MDBox component="form" role="form">
+                        <MDBox mb={2}>
+                          <TextField variant="standard" label="Nombre del Insumo" fullWidth value={insumosNombre} onChange={handleInsumosNombre} />
+                        </MDBox>
+                        <MDBox mb={2}>
+                          <TextField variant="standard" label="Cantidad" fullWidth value={insumosCantidad} onChange={handleInsumosCantidad} />
+                        </MDBox>
+                        <MDBox mb={2}>
+                          <TextField variant="standard" label="Unidad" fullWidth value={insumosUnidad} onChange={handleInsumosUnidad} />
+                        </MDBox>
+                        <MDBox mt={4} mb={1}>
+                          <MDButton variant="gradient" color="info" fullWidth onClick={handleInsumosSubmit}>
+                            Agregar Insumo
+                          </MDButton>
+                        </MDBox>
+                      </MDBox>
+                    </MDBox>
+                  </Card>
+                </Box>
+              </Modal>
             </Card>
           </Grid>
         </Grid>
