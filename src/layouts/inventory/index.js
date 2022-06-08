@@ -15,7 +15,7 @@ Coded by www.creative-tim.com
 
 /* eslint-disable */
 
-import * as React from 'react';
+import React, {useEffect} from 'react';
 
 // react-router-dom components
 import { Link } from "react-router-dom";
@@ -29,11 +29,13 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
+import appleIcon from "assets/images/bacteria.png";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDInput from 'components/MDInput';
 import MDButton from 'components/MDButton';
+import MDAvatar from "components/MDAvatar";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -46,6 +48,7 @@ import authorsTableData from "layouts/inventory/data/authorsTableData";
 
 //Buscador
 import UnstyledInputBasic from "./buscador";
+import { set } from 'date-fns';
 
 
 const style = {
@@ -61,16 +64,187 @@ const style = {
   };
 
 function Users() {
-  const { columns, rows } = authorsTableData();
-  const [open, setOpen] = React.useState((false));
 
+  const Reactive = ({ image, name, composition }) => (
+    <MDBox display="flex" alignItems="center" lineHeight={1}>
+      <MDAvatar src={image} name={name} size="sm" />
+      <MDBox ml={2} lineHeight={1}>
+        <MDTypography display="block" variant="button" fontWeight="medium">
+          {name}
+        </MDTypography>
+        <MDTypography variant="caption">{composition}</MDTypography>
+      </MDBox>
+    </MDBox>
+  );
+
+  const Availability = ({ qty }) => (
+    <MDBox lineHeight={1} textAlign="left">
+      <MDTypography display="block" variant="caption" color="text" fontWeight="medium">
+        {qty}
+      </MDTypography>
+    </MDBox>
+  );
+  const { columns, rows } = authorsTableData();
+  const [tableColumns,setTableColumns] = React.useState([
+    { Header: "Nombre", accessor: "author", width: "45%", align: "left" },
+    { Header: "Disponibilidad", accessor: "availability", align: "left" },
+    { Header: "Acciones", accessor: "action", align: "center" },
+  ]);
+  const [tableRows,setTableRows] = React.useState([
+    {
+      author: <Reactive image={appleIcon} name="Astaxantina" composition="Líquido" />,
+      availability: <Availability qty="100mg" />,
+      action: (
+        <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+          Edit
+        </MDTypography>
+      ),
+    },
+    {
+      author: <Reactive image={appleIcon} name="Fucoxantina" composition="Líquido" />,
+      availability: <Availability qty="100mg" />,
+      action: (
+        <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+          Edit
+        </MDTypography>
+      ),
+    },
+    {
+      author: <Reactive image={appleIcon} name="Fucoxantinol" composition="Líquido" />,
+      availability: <Availability qty="100mg" />,
+      action: (
+        <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+          Edit
+        </MDTypography>
+      ),
+    },
+    {
+      author: <Reactive image={appleIcon} name="rBC2LCN" composition="Líquido" />,
+      availability: <Availability qty="100mg" />,
+      action: (
+        <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+          Edit
+        </MDTypography>
+      ),
+    },
+    {
+      author: <Reactive image={appleIcon} name="Dicamba" composition="Líquido" />,
+      availability: <Availability qty="100mg" />,
+      action: (
+        <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+          Edit
+        </MDTypography>
+      ),
+    },
+    {
+      author: <Reactive image={appleIcon} name="Sericina" composition="Líquido" />,
+      availability: <Availability qty="100mg" />,
+      action: (
+        <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+          Edit
+        </MDTypography>
+      ),
+    },
+    {
+      author: <Reactive image={appleIcon} name="Biotina BTL-104 Phos-tag™" composition="Líquido" />,
+      availability: <Availability qty="100mg" />,
+      action: (
+        <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+          Edit
+        </MDTypography>
+      ),
+    },
+  ]);
+  const [open, setOpen] = React.useState((false));
   const [reactivos, setReactivos] = React.useState([]);
 
+  
 
+  useEffect(() => {
+        //loadTable();
+    
+    console.log("asdasdasd");
+  }, []);
+
+  function loadTable(){
+    setTableColumns([
+      { Header: "Nombre", accessor: "author", width: "45%", align: "left" },
+      { Header: "Disponibilidad", accessor: "availability", align: "left" },
+      { Header: "Acciones", accessor: "action", align: "center" },
+    ])
+  }
   function getReactivos() {
     fetch("http://localhost:4000/api/inventarios").then(response => response.json()).then(data => {console.log(data); setReactivos(data);})
     }
+  
+  async function searchReactivos(){
+    setTableRows([
+      {
+        author: <Reactive image={appleIcon} name="Astaxantina" composition="Líquido" />,
+        availability: <Availability qty="100mg" />,
+        action: (
+          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+            Edit
+          </MDTypography>
+        ),
+      },
+      {
+        author: <Reactive image={appleIcon} name="Fucoxantina" composition="Líquido" />,
+        availability: <Availability qty="100mg" />,
+        action: (
+          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+            Edit
+          </MDTypography>
+        ),
+      },
+      {
+        author: <Reactive image={appleIcon} name="Fucoxantinol" composition="Líquido" />,
+        availability: <Availability qty="100mg" />,
+        action: (
+          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+            Edit
+          </MDTypography>
+        ),
+      },
+      {
+        author: <Reactive image={appleIcon} name="rBC2LCN" composition="Líquido" />,
+        availability: <Availability qty="100mg" />,
+        action: (
+          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+            Edit
+          </MDTypography>
+        ),
+      },
+      {
+        author: <Reactive image={appleIcon} name="Dicamba" composition="Líquido" />,
+        availability: <Availability qty="100mg" />,
+        action: (
+          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+            Edit
+          </MDTypography>
+        ),
+      },
+      {
+        author: <Reactive image={appleIcon} name="Sericina" composition="Líquido" />,
+        availability: <Availability qty="100mg" />,
+        action: (
+          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+            Edit
+          </MDTypography>
+        ),
+      },
+      {
+        author: <Reactive image={appleIcon} name="Biotina BTL-104 Phos-tag™" composition="Líquido" />,
+        availability: <Availability qty="100mg" />,
+        action: (
+          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+            Edit
+          </MDTypography>
+        ),
+      },
+    ])
 
+  }
 
   return (
     <DashboardLayout>
@@ -105,7 +279,7 @@ function Users() {
               </MDBox>
               <MDBox pt={3}>
                 <DataTable
-                  table={{ columns, rows }}
+                  table={{ tableColumns, tableRows }}
                   isSorted={false}
                   entriesPerPage={false}
                   showTotalEntries={false}
