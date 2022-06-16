@@ -132,7 +132,7 @@ function Projects() {
   const [insumosProyecto, setInsumosProyecto] = React.useState("");
 
   function getProyectos() {
-    fetch("http://localhost:4000/api/proyecto").then(response => response.json()).then(data => {console.log(data); setProyectos(data);})
+    fetch("https://conicet-connect.herokuapp.com/api/proyecto").then(response => response.json()).then(data => {console.log(data); setProyectos(data);})
     }
 
   React.useEffect(() => {

@@ -42,7 +42,7 @@ import Dashboard from "layouts/dashboard";
 import Tables from "layouts/tables";
 import Projects from "layouts/projects";
 import Inventory from "layouts/inventory";
-import Billing from "layouts/billing";
+import Chat from "layouts/chat";
 import RTL from "layouts/rtl";
 import Notifications from "layouts/notifications";
 import Profile from "layouts/profile";
@@ -76,6 +76,14 @@ const routes = [
     icon: <Icon fontSize="small">vaccines</Icon>,
     route: "/inventory",
     component: <Inventory />,
+  },
+  {
+    type: "collapse",
+    name: "Chat",
+    key: "chat",
+    icon: <Icon fontSize="small">vaccines</Icon>,
+    route: "/chat",
+    component: <Chat />,
   },
 //   {
 //     type: "collapse",
