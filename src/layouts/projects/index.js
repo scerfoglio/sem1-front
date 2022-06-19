@@ -58,7 +58,7 @@ import DataTable from "examples/Tables/DataTable";
 
 // Data
 import projectsTableData from "layouts/projects/data/projectsTableData";
-import { AccordionDetails, AccordionSummary } from '@mui/material';
+import { AccordionDetails, AccordionSummary, Paper, TableContainer, Table, TableBody, TableHead, TableCell, TableRow } from '@mui/material';
 import { ConstructionOutlined } from '@mui/icons-material';
 
 const style = {
@@ -389,7 +389,7 @@ function Projects() {
                                   <Grid item xs>
                                     <b>Area:</b> {proyecto.area}
                                   </Grid>
-                                  <Divider orientation="vertical" flexItem />
+                                  <Divider orientation="vertical" flexitem="true" />
                                   <Grid item xs>
                                     <b>Campo de Accion:</b> {proyecto.campo_accion}
                                   </Grid>
@@ -400,22 +400,41 @@ function Projects() {
                                   <Grid item xs>
                                     <b>Insumos:</b>
                                   </Grid>
-                                  <Divider orientation="vertical" flexItem />
+                                  <Divider orientation="vertical" flexitem="true" />
                                   <Grid item xs>
                                     <Button variant="contained" color="success" onClick={() => handleInsumosModalOpen(proyecto._id, proyecto.usuarios)} sx={{ backgroundColor: "#66bb6a", color:"#000000" }}>Agregar Insumo</Button>
                                   </Grid>
                                 </Grid>
                           </Stack>
                           <Stack direction="row" alignItems="center" mb={5}>
-                            <List>
-                              {proyecto.insumos.map((insumo, index) => {
-                                return <ListItem>
-                                  <ListItemIcon><ScienceIcon /></ListItemIcon>
-                                  <ListItemText primary={insumo.nombre + " " + insumo.cantidad + " " + insumo.unidad}/>
-                                  <ListItemText ml={5}>{insumo.responsable}</ListItemText>
-                                </ListItem>
-                              })}
-                            </List>
+                            <TableContainer component={Paper}>
+                              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                <TableHead sx={{ display: 'table-header-group' }}>
+                                  <TableRow>
+                                    <TableCell>Nombre</TableCell>
+                                    <TableCell align="right">Cantidad</TableCell>
+                                    <TableCell align="right">Responsable</TableCell>
+                                    <TableCell>Acciones</TableCell>
+                                  </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                  {proyecto.insumos.map((insumo, index) => {
+                                    return <TableRow key={insumo.nombre} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                      <TableCell component="th" scope="row">{insumo.nombre}</TableCell>
+                                      <TableCell align="right">{insumo.cantidad + " " + insumo.unidad}</TableCell>
+                                      <TableCell align="right">{insumo.responsable}</TableCell>
+                                      <TableCell>
+                                        <Stack direction="row" spacing={2}>
+                                          <Button variant="contained" color="success" sx={{ backgroundColor: "#66bb6a", color:"#000000" }}>Aceptar</Button>
+                                          <Button variant="contained" color="error" sx={{ backgroundColor: "#ff0000", color:"#000000" }}>Rechazar</Button>
+                                          <Typography>Nota del pedido</Typography>
+                                        </Stack>
+                                      </TableCell>
+                                    </TableRow>
+                                  })}
+                                </TableBody>
+                              </Table>
+                            </TableContainer>
                           </Stack>
                           <Stack direction="row" alignItems="center" mb={5}>
                               <Typography>Miembros:</Typography>
