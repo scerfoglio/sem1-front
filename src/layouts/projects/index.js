@@ -124,12 +124,14 @@ function Projects() {
   const handleOpen = () => setOpen(true);
   const handleClose =() => setOpen(false);
   const [insumosModal, setInsumosModal] = React.useState(false);
-  const handleInsumosModalOpen = (proyecto) => {setInsumosModal(true); setInsumosProyecto(proyecto);};
-  const handleInsumosModalClose = () => {setInsumosModal(false); setInsumosProyecto(""); setInsumosNombre(""); setInsumosCantidad(""); setInsumosUnidad("")};
+  const handleInsumosModalOpen = (proyecto, usuarios) => {setInsumosModal(true); setInsumosProyecto(proyecto); setInsumosUsuarios(usuarios);};
+  const handleInsumosModalClose = () => {setInsumosModal(false); setInsumosProyecto(""); setInsumosNombre(""); setInsumosCantidad(""); setInsumosUnidad(""); setInsumosUsuarios([])};
   const [insumosNombre, setInsumosNombre] = React.useState("");
   const [insumosCantidad, setInsumosCantidad] = React.useState("");
   const [insumosUnidad, setInsumosUnidad] = React.useState("");
   const [insumosProyecto, setInsumosProyecto] = React.useState("");
+  const [insumosUsuarioResponsable, setInsumosUsuarioResponsable] = React.useState("");
+  const [insumosUsuarios, setInsumosUsuarios] = React.useState([]);
 
   function getProyectos() {
     fetch("https://conicet-connect.herokuapp.com/api/proyecto").then(response => response.json()).then(data => {console.log(data); setProyectos(data);})
@@ -161,6 +163,10 @@ function Projects() {
 
   const handleArea = (event) => {
     setArea(event.target.value);
+  }
+
+  const handleInsumosUsuarioResponsable = (event) => {
+    setInsumosUsuarioResponsable(event.target.value);
   }
 
   const handlePresupuesto = (event) => {
@@ -396,7 +402,7 @@ function Projects() {
                                   </Grid>
                                   <Divider orientation="vertical" flexItem />
                                   <Grid item xs>
-                                    <Button variant="contained" color="success" onClick={() => handleInsumosModalOpen(proyecto._id)} sx={{ backgroundColor: "#66bb6a", color:"#000000" }}>Agregar Insumo</Button>
+                                    <Button variant="contained" color="success" onClick={() => handleInsumosModalOpen(proyecto._id, proyecto.usuarios)} sx={{ backgroundColor: "#66bb6a", color:"#000000" }}>Agregar Insumo</Button>
                                   </Grid>
                                 </Grid>
                           </Stack>
@@ -451,6 +457,23 @@ function Projects() {
                         </MDBox>
                         <MDBox mb={2}>
                           <TextField variant="standard" label="Unidad" fullWidth value={insumosUnidad} onChange={handleInsumosUnidad} />
+                        </MDBox>
+                        <MDBox mb={2}>
+                          <TextField
+                            variant="standard"
+                            id="outlined-select-currency"
+                            select
+                            label="Usuario Responsable"
+                            value={insumosUsuarioResponsable}
+                            fullWidth
+                            onChange={handleInsumosUsuarioResponsable}
+                          >
+                            {insumosUsuarios.map((usuario) => (
+                              <MenuItem key={usuario.email} value={usuario.email}>
+                                {usuario.email}
+                              </MenuItem>
+                            ))}
+                          </TextField>
                         </MDBox>
                         <MDBox mt={4} mb={1}>
                           <MDButton variant="gradient" color="info" fullWidth onClick={handleInsumosSubmit}>
