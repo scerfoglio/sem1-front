@@ -223,8 +223,8 @@ function Projects() {
   }
 
   function handleInsumosSubmit() {
-    let insumoPOST = {proyecto: insumosProyecto, nombre: insumosNombre, cantidad: insumosCantidad, unidad: insumosUnidad};
-    let insumo = {nombre: insumosNombre, cantidad: insumosCantidad, unidad: insumosUnidad};
+    let insumoPOST = {proyecto: insumosProyecto, nombre: insumosNombre, cantidad: insumosCantidad, unidad: insumosUnidad, responsable: insumosUsuarioResponsable};
+    let insumo = {nombre: insumosNombre, cantidad: insumosCantidad, unidad: insumosUnidad, responsable: insumosUsuarioResponsable};
     let proyectoAAgregar = JSON.parse(JSON.stringify(proyectos.find(proyecto => proyecto._id === insumosProyecto)));
     proyectoAAgregar.insumos.push(insumo)
     const updatedProyectos = proyectos.map(proyecto => {
@@ -411,7 +411,8 @@ function Projects() {
                               {proyecto.insumos.map((insumo, index) => {
                                 return <ListItem>
                                   <ListItemIcon><ScienceIcon /></ListItemIcon>
-                                  <ListItemText primary={insumo.nombre + " " + insumo.cantidad + insumo.unidad}/>
+                                  <ListItemText primary={insumo.nombre + " " + insumo.cantidad + " " + insumo.unidad}/>
+                                  <ListItemText ml={5}>{insumo.responsable}</ListItemText>
                                 </ListItem>
                               })}
                             </List>
