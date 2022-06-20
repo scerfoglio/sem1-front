@@ -222,8 +222,15 @@ function Projects() {
     })
   }
 
-  function handleInsumosSubmit() {
-    let insumoPOST = {proyecto: insumosProyecto, nombre: insumosNombre, cantidad: insumosCantidad, unidad: insumosUnidad, responsable: insumosUsuarioResponsable};
+  async function handleInsumosSubmit() {
+    let insumoPOST = {nombre: insumosNombre, cantidad: insumosCantidad, unidad: insumosUnidad, idContacto: insumosUsuarioResponsable};
+    const response = await fetch(`https://conicet-connect.herokuapp.com/api/proyecto/${insumosProyecto}/insumo`, {
+      method: 'put',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(insumoPOST)
+    });
     let insumo = {nombre: insumosNombre, cantidad: insumosCantidad, unidad: insumosUnidad, responsable: insumosUsuarioResponsable};
     let proyectoAAgregar = JSON.parse(JSON.stringify(proyectos.find(proyecto => proyecto._id === insumosProyecto)));
     proyectoAAgregar.insumos.push(insumo)
