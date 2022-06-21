@@ -134,7 +134,8 @@ function Projects() {
   const [insumosUsuarios, setInsumosUsuarios] = React.useState([]);
 
   function getProyectos() {
-    fetch("https://conicet-connect.herokuapp.com/api/proyecto").then(response => response.json()).then(data => {console.log(data); setProyectos(data);})
+    fetch("http://localhost:3001/api/proyecto").then(response => response.json()).then(data => {console.log(data); setProyectos(data);})
+    // fetch("https://conicet-connect.herokuapp.com/api/proyecto").then(response => response.json()).then(data => {console.log(data); setProyectos(data);})
     }
 
   React.useEffect(() => {
@@ -223,8 +224,10 @@ function Projects() {
   }
 
   async function handleInsumosSubmit() {
-    let insumoPOST = {nombre: insumosNombre, cantidad: insumosCantidad, unidad: insumosUnidad, idContacto: insumosUsuarioResponsable};
-    const response = await fetch(`https://conicet-connect.herokuapp.com/api/proyecto/${insumosProyecto}/insumo`, {
+    let insumoPOST = {nombre: insumosNombre, cantidad: insumosCantidad, unidad: insumosUnidad, idContacto: JSON.parse(insumosUsuarioResponsable)};
+    console.log(insumoPOST);
+    const response = await fetch(`http://localhost:3001/api/proyecto/${insumosProyecto}/insumo`, {
+    // const response = await fetch(`https://conicet-connect.herokuapp.com/api/proyecto/${insumosProyecto}/insumo`, {
       method: 'put',
       headers: {
         'Content-Type': 'application/json'
@@ -496,7 +499,7 @@ function Projects() {
                             onChange={handleInsumosUsuarioResponsable}
                           >
                             {insumosUsuarios.map((usuario) => (
-                              <MenuItem key={usuario.email} value={usuario.email}>
+                              <MenuItem key={usuario.email} value={JSON.stringify(usuario)}>
                                 {usuario.email}
                               </MenuItem>
                             ))}
