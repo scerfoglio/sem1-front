@@ -28,6 +28,7 @@ import Stack from "@mui/material/Stack";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import TextField from '@mui/material/TextField';
 
 import {Container, Row, Dropdown, DropdownButton, Badge} from "react-bootstrap";
 
@@ -67,14 +68,13 @@ p: 4,
 
 function Users() {
 
-const Reactive = ({ image, name, composition }) => (
+const Reactive = ({ image, name }) => (
 <MDBox display="flex" alignItems="center" lineHeight={1}>
     <MDAvatar src={image} name={name} size="sm" />
     <MDBox ml={2} lineHeight={1}>
     <MDTypography display="block" variant="button" fontWeight="medium">
         {name}
     </MDTypography>
-    <MDTypography variant="caption">{composition}</MDTypography>
     </MDBox>
 </MDBox>
 );
@@ -91,101 +91,60 @@ const [tableColumns,setTableColumns] = React.useState([]);
 const [tableRows,setTableRows] = React.useState([]);
 const [open, setOpen] = React.useState((false));
 const [reactivos, setReactivos] = React.useState([]);
-
+const [searchChain, setSearchChain] = React.useState("");
 
 
 useEffect(() => {
     loadTable();
-    loadReactivos();
+    //loadReactivos();
+    getReactivos();
 }, []);
 
 function loadTable(){
-setTableColumns(["Nombre", "Disponibilidad", "Acciones"]);
+    setTableColumns(["Nombre", "Disponibilidad", "Proyecto", "Acciones"]);
 }
 function getReactivos() {
-fetch("http://localhost:4000/api/inventarios").then(response => response.json()).then(data => {console.log(data); setReactivos(data);})
+    fetch("https://conicet-connect.herokuapp.com/api/insumo").then(response => response.json()).then(data => {
+        console.log(data); 
+
+
+        let aux = [];
+        let proy = "";
+
+        for(let i of data.insumos){
+            for(let i2 of i.proyectos){
+                aux.push({
+                    nombre: i.nombre,
+                    disponibilidad: i2.cantidad,
+                    unidad: i.unidad,
+                    proyecto: i2.nombre,
+                    idProyecto: i2._id,
+                    idReactivo: i._id
+                })
+            }
+        }
+
+        setTableRows(aux);
+        setReactivos(aux);
+
+    })
 }
 
 function searchReactivos(){
-    setTableRows([{
-        author: <Reactive image={appleIcon} name="Dicamba" composition="Líquido" />,
-        availability: <Availability qty="100mg" />,
-        action: (
-            <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            Editar
-            </MDTypography>
-        ),
-        }])
+    let aux = [];
+    for(let i of reactivos){
+        if(i.nombre.toLowerCase().includes(searchChain.toLowerCase())){
+            aux.push(i)
+        }
+    }
+
+    setTableRows(aux);
 }
 
-async function loadReactivos(){
-setTableRows([
-    {
-    author: <Reactive image={appleIcon} name="Astaxantina" composition="Líquido" />,
-    availability: <Availability qty="100mg" />,
-    action: (
-        <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-        Editar
-        </MDTypography>
-    ),
-    },
-    {
-    author: <Reactive image={appleIcon} name="Fucoxantina" composition="Líquido" />,
-    availability: <Availability qty="100mg" />,
-    action: (
-        <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-        Editar
-        </MDTypography>
-    ),
-    },
-    {
-    author: <Reactive image={appleIcon} name="Fucoxantinol" composition="Líquido" />,
-    availability: <Availability qty="100mg" />,
-    action: (
-        <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-        Editar
-        </MDTypography>
-    ),
-    },
-    {
-    author: <Reactive image={appleIcon} name="rBC2LCN" composition="Líquido" />,
-    availability: <Availability qty="100mg" />,
-    action: (
-        <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-        Editar
-        </MDTypography>
-    ),
-    },
-    {
-    author: <Reactive image={appleIcon} name="Dicamba" composition="Líquido" />,
-    availability: <Availability qty="100mg" />,
-    action: (
-        <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-        Editar
-        </MDTypography>
-    ),
-    },
-    {
-    author: <Reactive image={appleIcon} name="Sericina" composition="Líquido" />,
-    availability: <Availability qty="100mg" />,
-    action: (
-        <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-        Editar
-        </MDTypography>
-    ),
-    },
-    {
-    author: <Reactive image={appleIcon} name="Biotina BTL-104 Phos-tag™" composition="Líquido" />,
-    availability: <Availability qty="100mg" />,
-    action: (
-        <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-        Editar
-        </MDTypography>
-    ),
-    },
-])
-
+const handleSearch = (event) => {
+    setSearchChain(event.target.value);
 }
+
 
 return (
 <DashboardLayout>
@@ -214,7 +173,7 @@ return (
                     Buscar Reactivo
                 </Button>
                 <MDBox pr={1}>
-                        <UnstyledInputBasic/>
+                    <TextField variant="outlined" style={{background: "white"}} fullWidth onChange={handleSearch} />
                 </MDBox>
             </Stack>
             </MDBox>
@@ -227,9 +186,10 @@ return (
                     <tbody>
                         {tableRows.map((r, i) => (
                             <tr className='mt-2' key={i} >
-                                <td className='mt-2'>{r.author}</td>
-                                <td style={{textAlign: "center"}}>{r.availability}</td>
-                                <td className='mt-2'>{r.action}</td>
+                                <td className='mt-2'>{<Reactive image={appleIcon} name={r.nombre} composition="Líquido" />}</td>
+                                <td style={{textAlign: "center"}}>{<Availability qty={`${r.disponibilidad} ${r.unidad}`} />}</td>
+                                <td style={{textAlign: "center"}}>{<Availability qty={r.proyecto} />}</td>
+                                <td className='mt-2'>{<Link to="/chat"><MDTypography variant="caption" color="text" fontWeight="medium">Contactar</MDTypography></Link>}</td>
                             </tr>
                         ))}
                     </tbody>

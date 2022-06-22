@@ -54,5 +54,5 @@ const CustomInput = React.forwardRef(function CustomInput(props, ref) {
 });
 
 export default function UnstyledInputBasic() {
-  return <CustomInput aria-label="Demo input" placeholder="Ingresar Reactivo a buscar..." />;
+  return <CustomInput aria-label="Demo input" placeholder="Buscar..." />;
 }
