@@ -49,6 +49,7 @@ import MDTypography from "components/MDTypography";
 import MDInput from 'components/MDInput';
 import MDButton from 'components/MDButton';
 import iconBulb from "assets/images/small-logos/icon-bulb.svg";
+import Snackbar from '@mui/material/Snackbar';
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -60,6 +61,12 @@ import DataTable from "examples/Tables/DataTable";
 import projectsTableData from "layouts/projects/data/projectsTableData";
 import { AccordionDetails, AccordionSummary, Paper, TableContainer, Table, TableBody, TableHead, TableCell, TableRow } from '@mui/material';
 import { ConstructionOutlined } from '@mui/icons-material';
+
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const style = {
     position: 'absolute',
@@ -132,6 +139,9 @@ function Projects() {
   const [insumosProyecto, setInsumosProyecto] = React.useState("");
   const [insumosUsuarioResponsable, setInsumosUsuarioResponsable] = React.useState("");
   const [insumosUsuarios, setInsumosUsuarios] = React.useState([]);
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+  const [snackbarStatus, setSnackbarStatus] = React.useState("");
+  const [snackbarMessage, setSnackbarMessage] = React.useState("");
 
   function getProyectos() {
     fetch("https://conicet-connect.herokuapp.com/api/proyecto").then(response => response.json()).then(data => {console.log(data); setProyectos(data);})
@@ -194,6 +204,45 @@ function Projects() {
     setEmails((chips) => chips.filter((chip) => chip.key !== chipToDelete.key));
   };
 
+  const handleSnackBar = (proyectoParam, insumoParam, isAccepted, message) => {
+    setSnackbarMessage(message);
+    setSnackbarStatus(isAccepted ? "success" : "error")
+    setSnackbarOpen(true);
+
+    let proyectoAAgregar = JSON.parse(JSON.stringify(proyectos.find(proyecto => proyecto._id === proyectoParam._id)));
+
+    let insumo = proyectoAAgregar.insumos.find(insumo => (insumo.nombre === insumoParam.nombre) && (insumo.cantidad === insumoParam.cantidad) && (insumo.unidad === insumoParam.unidad));
+    console.log(insumo);
+    if (isAccepted) insumo.cantidad = insumo.cantidad - 100;
+    insumo.pendiente = "Hola Mundo";
+
+    console.log("proyectoAAgregar")
+    console.log(proyectoAAgregar);
+
+    const updatedProyectos = proyectos.map(proyecto => {
+      if (proyecto._id === proyectoAAgregar._id) { return proyectoAAgregar; }
+      return proyecto;
+    })
+
+
+    setProyectos(updatedProyectos);
+
+    console.log("proyectos");
+    console.log(proyectos);
+    console.log(isAccepted);
+    console.log(message);
+  }
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    console.log(snackbarMessage);
+    setSnackbarStatus("");
+    setSnackbarMessage("");
+    setSnackbarOpen(false);
+  }
+
 
   function handleSubmit() {
     let usuarios = [];
@@ -212,7 +261,7 @@ function Projects() {
     setProyectos([...proyectos, proyecto]);
     handleClose();
 
-    fetch("http://localhost:4000/api/proyecto", {
+    fetch("https://conicet-connect.herokuapp.com/api/proyecto", {
         method: 'POST',
         mode: 'cors',
         headers: {
@@ -223,7 +272,7 @@ function Projects() {
   }
 
   function handleInsumosSubmit() {
-    let insumoPOST = {proyecto: insumosProyecto, nombre: insumosNombre, cantidad: insumosCantidad, unidad: insumosUnidad, responsable: insumosUsuarioResponsable};
+    let insumoPOST = {nombre: insumosNombre, cantidad: insumosCantidad, unidad: insumosUnidad, responsable: insumosUsuarioResponsable};
     let insumo = {nombre: insumosNombre, cantidad: insumosCantidad, unidad: insumosUnidad, responsable: insumosUsuarioResponsable};
     let proyectoAAgregar = JSON.parse(JSON.stringify(proyectos.find(proyecto => proyecto._id === insumosProyecto)));
     proyectoAAgregar.insumos.push(insumo)
@@ -233,6 +282,17 @@ function Projects() {
     })
     setProyectos(updatedProyectos);
     handleInsumosModalClose();
+
+    let url = "https://conicet-connect.herokuapp.com/api/proyecto/" + insumosProyecto + "/insumo";
+
+    fetch(url, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(insumoPOST)
+    })
   }
 
   return (
@@ -424,11 +484,13 @@ function Projects() {
                                       <TableCell align="right">{insumo.cantidad + " " + insumo.unidad}</TableCell>
                                       <TableCell align="right">{insumo.responsable}</TableCell>
                                       <TableCell>
-                                        <Stack direction="row" spacing={2}>
-                                          <Button variant="contained" color="success" sx={{ backgroundColor: "#66bb6a", color:"#000000" }}>Aceptar</Button>
-                                          <Button variant="contained" color="error" sx={{ backgroundColor: "#ff0000", color:"#000000" }}>Rechazar</Button>
-                                          <Typography>Nota del pedido</Typography>
-                                        </Stack>
+                                        {!insumo.pendiente ? 
+                                          <Stack direction="row" spacing={2}>
+                                            <Button variant="contained" color="success" onClick={() => handleSnackBar(proyecto, insumo, true, "Pedido aceptado")} sx={{ backgroundColor: "#66bb6a", color:"#000000" }}>Aceptar</Button>
+                                            <Button variant="contained" color="error" onClick={() => handleSnackBar(proyecto, insumo, false, "Pedido Rechazado")} sx={{ backgroundColor: "#ff0000", color:"#000000" }}>Rechazar</Button>
+                                            <Typography>Nota del pedido</Typography>
+                                          </Stack> : <Typography>No hay acciones pendientes</Typography>
+                                        }
                                       </TableCell>
                                     </TableRow>
                                   })}
@@ -509,6 +571,15 @@ function Projects() {
           </Grid>
         </Grid>
       </MDBox>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbarStatus} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </DashboardLayout>
   );
 }
