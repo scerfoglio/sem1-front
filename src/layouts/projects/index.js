@@ -271,9 +271,16 @@ function Projects() {
     })
   }
 
-  function handleInsumosSubmit() {
-    let insumoPOST = {nombre: insumosNombre, cantidad: insumosCantidad, unidad: insumosUnidad, responsable: insumosUsuarioResponsable};
-    let insumo = {nombre: insumosNombre, cantidad: insumosCantidad, unidad: insumosUnidad, responsable: insumosUsuarioResponsable};
+  async function handleInsumosSubmit() {
+    let insumoPOST = {nombre: insumosNombre, cantidad: insumosCantidad, unidad: insumosUnidad, idContacto: insumosUsuarioResponsable};
+    const response = await fetch(`https://conicet-connect.herokuapp.com/api/proyecto/${insumosProyecto}/insumo`, {
+      method: 'put',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(insumoPOST)
+    });
+    let insumo = {nombre: insumosNombre, cantidad: insumosCantidad, unidad: insumosUnidad, idContacto: insumosUsuarioResponsable};
     let proyectoAAgregar = JSON.parse(JSON.stringify(proyectos.find(proyecto => proyecto._id === insumosProyecto)));
     proyectoAAgregar.insumos.push(insumo)
     const updatedProyectos = proyectos.map(proyecto => {
@@ -282,17 +289,6 @@ function Projects() {
     })
     setProyectos(updatedProyectos);
     handleInsumosModalClose();
-
-    let url = "https://conicet-connect.herokuapp.com/api/proyecto/" + insumosProyecto + "/insumo";
-
-    fetch(url, {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(insumoPOST)
-    })
   }
 
   return (
@@ -482,7 +478,7 @@ function Projects() {
                                     return <TableRow key={insumo.nombre} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                       <TableCell component="th" scope="row">{insumo.nombre}</TableCell>
                                       <TableCell align="right">{insumo.cantidad + " " + insumo.unidad}</TableCell>
-                                      <TableCell align="right">{insumo.responsable}</TableCell>
+                                      <TableCell align="right">{insumo.idContacto}</TableCell>
                                       <TableCell>
                                         {!insumo.pendiente ? 
                                           <Stack direction="row" spacing={2}>
