@@ -32,6 +32,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import ScienceIcon from '@mui/icons-material/Science';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Accordion from '@mui/material/Accordion';
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -142,6 +143,12 @@ function Projects() {
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [snackbarStatus, setSnackbarStatus] = React.useState("");
   const [snackbarMessage, setSnackbarMessage] = React.useState("");
+  const handleDisponibilizarModalOpen = (proyecto, insumo) => {setDisponibilizarModal(true); setDisponibilizarProyecto(proyecto); setDisponibilizarInsumo(insumo);};
+  const handleDisponibilizarModalClose = () => {setDisponibilizarModal(false); setDisponibilizarProyecto({}); setDisponibilizarInsumo({}); setDisponibilizarCantidad(0)};
+  const [disponibilizaModal, setDisponibilizarModal] = React.useState(false);
+  const [disponibilizarProyecto, setDisponibilizarProyecto] = React.useState({});
+  const [disponibilizarInsumo, setDisponibilizarInsumo] = React.useState({});
+  const [disponibilizarCantidad, setDisponibilizarCantidad] = React.useState(0);
 
   function getProyectos() {
     fetch("https://conicet-connect.herokuapp.com/api/proyecto").then(response => response.json()).then(data => {console.log(data); setProyectos(data);})
@@ -191,6 +198,10 @@ function Projects() {
     setEmailInput(event.target.value);
   }
 
+  const handleDisponibilizarCantidad = (event) => {
+    setDisponibilizarCantidad(event.target.value);
+  }
+
   const handleEmailCreate = (event) => {
     if (event.key === "Enter") {
         let lastKey = emails.length > 0 ? emails[emails.length - 1].key + 1 : 1;
@@ -213,7 +224,7 @@ function Projects() {
 
     let insumo = proyectoAAgregar.insumos.find(insumo => (insumo.nombre === insumoParam.nombre) && (insumo.cantidad === insumoParam.cantidad) && (insumo.unidad === insumoParam.unidad));
     console.log(insumo);
-    if (isAccepted) insumo.cantidad = insumo.cantidad - 100;
+    if (isAccepted) insumo.cantidad = insumo.cantidad - insumoParam.pendiente.cantidad;
     insumo.pendiente = "Hola Mundo";
 
     console.log("proyectoAAgregar")
@@ -231,6 +242,27 @@ function Projects() {
     console.log(proyectos);
     console.log(isAccepted);
     console.log(message);
+
+    let requestBody = {idProyecto: proyectoParam._id, isSolicitud: insumoParam.pendiente._id}
+    /*
+    if (isAccepted) {
+        fetch(`https://conicet-connect.herokuapp.com/api/insumo/${insumoParam._id}/aceptar`, {
+            method: 'post',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+          });
+    } else {
+        fetch(`https://conicet-connect.herokuapp.com/api/insumo/${insumoParam._id}/rechazar`, {
+            method: 'post',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+          });
+    }
+    */
   }
 
   const handleSnackbarClose = (event, reason) => {
@@ -241,6 +273,22 @@ function Projects() {
     setSnackbarStatus("");
     setSnackbarMessage("");
     setSnackbarOpen(false);
+  }
+
+  const handleDisponibilizarSubmit = () => {
+    handleDisponibilizarModalClose();
+    console.log(disponibilizarProyecto);
+    console.log(disponibilizarInsumo);
+    console.log(disponibilizarCantidad);
+    let disponibilizarPOST = {idProyecto: disponibilizarProyecto._id, idInsumo: disponibilizarInsumo._id, cantidad: disponibilizarCantidad}
+
+    // fetch(`https://conicet-connect.herokuapp.com/api/insumo/${insumoParam._id}/rechazar`, {
+    //         method: 'post',
+    //         headers: {
+    //           'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify(disponibilizarPOST)
+    // });
   }
 
 
@@ -271,6 +319,8 @@ function Projects() {
     })
   }
 
+  
+
   async function handleInsumosSubmit() {
     let insumoPOST = {nombre: insumosNombre, cantidad: insumosCantidad, unidad: insumosUnidad, idContacto: insumosUsuarioResponsable};
     const response = await fetch(`https://conicet-connect.herokuapp.com/api/proyecto/${insumosProyecto}/insumo`, {
@@ -280,7 +330,7 @@ function Projects() {
       },
       body: JSON.stringify(insumoPOST)
     });
-    let insumo = {nombre: insumosNombre, cantidad: insumosCantidad, unidad: insumosUnidad, idContacto: insumosUsuarioResponsable};
+    let insumo = {nombre: insumosNombre, cantidad: insumosCantidad, unidad: insumosUnidad, responsable: insumosUsuarioResponsable, pendiente: {}};
     let proyectoAAgregar = JSON.parse(JSON.stringify(proyectos.find(proyecto => proyecto._id === insumosProyecto)));
     proyectoAAgregar.insumos.push(insumo)
     const updatedProyectos = proyectos.map(proyecto => {
@@ -478,14 +528,15 @@ function Projects() {
                                     return <TableRow key={insumo.nombre} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                       <TableCell component="th" scope="row">{insumo.nombre}</TableCell>
                                       <TableCell align="right">{insumo.cantidad + " " + insumo.unidad}</TableCell>
-                                      <TableCell align="right">{insumo.idContacto}</TableCell>
+                                      <TableCell align="right">{insumo.responsable}</TableCell>
                                       <TableCell>
-                                        {!insumo.pendiente ? 
+                                      {(insumo.pendiente && !insumo.pendiente.aceptado && insumo.pendiente.solicitado) ? 
                                           <Stack direction="row" spacing={2}>
-                                            <Button variant="contained" color="success" onClick={() => handleSnackBar(proyecto, insumo, true, "Pedido aceptado")} sx={{ backgroundColor: "#66bb6a", color:"#000000" }}>Aceptar</Button>
-                                            <Button variant="contained" color="error" onClick={() => handleSnackBar(proyecto, insumo, false, "Pedido Rechazado")} sx={{ backgroundColor: "#ff0000", color:"#000000" }}>Rechazar</Button>
-                                            <Typography>Nota del pedido</Typography>
-                                          </Stack> : <Typography>No hay acciones pendientes</Typography>
+                                            <Button variant="contained" color="success" onClick={() => handleSnackBar(proyecto, insumo, true, `Pedido por ${insumo.pendiente.cantidad}${insumo.unidad} de ${insumo.nombre} aceptado`)} sx={{ backgroundColor: "#66bb6a", color:"#000000" }}>Aceptar</Button>
+                                            <Button variant="contained" color="error" onClick={() => handleSnackBar(proyecto, insumo, false, `Pedido por ${insumo.pendiente.cantidad}${insumo.unidad} de ${insumo.nombre} rechazado`)} sx={{ backgroundColor: "#ff0000", color:"#000000" }}>Rechazar</Button>
+                                            <Typography>Solicitud por {insumo.pendiente.cantidad}{insumo.unidad}</Typography>
+                                          </Stack> : 
+                                          <Button variant="contained" color="success" onClick={() => handleDisponibilizarModalOpen(proyecto, insumo)} sx={{ backgroundColor: "#2c83e8", color:"#000000" }}><ShoppingCartIcon/> Disponibilizar</Button>
                                         }
                                       </TableCell>
                                     </TableRow>
@@ -563,11 +614,45 @@ function Projects() {
                   </Card>
                 </Box>
               </Modal>
+              <Modal open={disponibilizaModal} onClose={handleDisponibilizarModalClose}>
+                <Box sx={style}>
+                  <Card>
+                    <MDBox
+                      variant="gradient"
+                      bgColor="info"
+                      borderRadius="lg"
+                      coloredShadow="success"
+                      mx={2}
+                      mt={-3}
+                      p={3}
+                      mb={1}
+                      textAlign="center"
+                    >
+                      <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
+                        Disponibilizar
+                      </MDTypography>
+                    </MDBox>
+                    <MDBox pt={4} pb={3} px={3}>
+                      <MDBox component="form" role="form">
+                        <MDBox mb={2}>
+                          <TextField variant="standard" label="Cantidad a disponibilizar" fullWidth value={disponibilizarCantidad} onChange={handleDisponibilizarCantidad} />
+                        </MDBox>
+                        <MDBox mt={4} mb={1}>
+                          <MDButton variant="gradient" color="info" fullWidth onClick={handleDisponibilizarSubmit}>
+                            Disponibilizar Insumo
+                          </MDButton>
+                        </MDBox>
+                      </MDBox>
+                    </MDBox>
+                  </Card>
+                </Box>
+              </Modal>
             </Card>
           </Grid>
         </Grid>
       </MDBox>
       <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         open={snackbarOpen}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
