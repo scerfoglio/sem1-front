@@ -169,15 +169,15 @@ const handleSearch = (event) => {
 const handleDisponibilizarSubmit = () => {
     handleDisponibilizarModalClose();
     let aux = currentRow;
-    currentRow.correoContacto = contactarPersona;
+    aux.correoContacto = contactarPersona;
     console.log(contactarPersona);
     console.log(currentRow);
     console.log(cantidadReserva);
     console.log(currentRow.idProyecto)
     
-    let reservar = {idProyecto: currentRow.idProyecto, cantidad: cantidadReserva, aceptado: false, correo: contactarPersona}
+    let reservar = {idProyecto: aux.idProyecto, cantidad: cantidadReserva, aceptado: false, correo: contactarPersona}
     
-    fetch(`https://conicet-connect.herokuapp.com/api/insumo/62c45106ab752300130970df/reservar`, {  
+    fetch(`https://conicet-connect.herokuapp.com/api/insumo/${aux.idProyecto}/reservar`, {  
             mode: 'cors',
             method: 'post',
             headers: {
@@ -186,7 +186,7 @@ const handleDisponibilizarSubmit = () => {
             body: JSON.stringify(reservar)
      });
     
-    pedidoChat(currentRow.idReactivo,contactarPersona);
+    pedidoChat(aux.idReactivo, contactarPersona);
 
     alert("Reserva enviada!");
   }
