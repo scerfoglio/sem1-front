@@ -100,7 +100,12 @@ const [disponibilizaModal, setDisponibilizarModal] = React.useState(false);
 const handleDisponibilizarModalOpen = (r) => {setDisponibilizarModal(true); setCurrentRow(r)};
 const handleDisponibilizarModalClose = () => {setDisponibilizarModal(false)};
 const [contactarPersona, setContactarPersona] = React.useState();
+const [cantidadReserva, setCantidadReserva] = React.useState();
 const [currentRow,setCurrentRow] =  React.useState({});
+
+const handleCantidadReserva = (event) => {
+    setCantidadReserva(event.target.value);
+  }
 
 const handleContactarPersona = (event) => {
     setContactarPersona(event.target.value);
@@ -153,6 +158,11 @@ function searchReactivos(){
     setTableRows(aux);
 }
 
+const pedidoChat = (proyecto,persona) =>{
+    console.log("proyecto = " + proyecto);
+    console.log("persona = " + persona);
+}
+
 const handleSearch = (event) => {
     setSearchChain(event.target.value);
 }
@@ -162,19 +172,24 @@ const handleDisponibilizarSubmit = () => {
     currentRow.correoContacto = contactarPersona;
     console.log(contactarPersona);
     console.log(currentRow);
+    console.log(cantidadReserva);
+    console.log(currentRow.idProyecto)
     
-    //console.log(disponibilizarCantidad);
-    //let disponibilizarPOST = {idProyecto: disponibilizarProyecto._id, idInsumo: disponibilizarInsumo._id, cantidad: disponibilizarCantidad}
+    let reservar = {idProyecto: currentRow.idProyecto, cantidad: cantidadReserva, aceptado: false, correo: contactarPersona}
+    
+    fetch(`https://conicet-connect.herokuapp.com/api/insumo/62c45106ab752300130970df/reservar`, {  
+            mode: 'cors',
+            method: 'post',
+            headers: {
+               'Content-Type': 'application/json'
+             },
+            body: JSON.stringify(reservar)
+     });
+    
+    pedidoChat(currentRow.idReactivo,contactarPersona);
 
-    // fetch(`https://conicet-connect.herokuapp.com/api/insumo/${insumoParam._id}/rechazar`, {   path = cambiar a inventario.
-    //         method: 'post',
-    //         headers: {
-    //           'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify(disponibilizarPOST)
-    // });
+    alert("Reserva enviada!");
   }
-
 
 
 return (
@@ -217,10 +232,10 @@ return (
                         <tbody>
                             {tableRows.map((r, i) => (
                                 <tr className='mt-2' key={i} >
-                                    <td className='mt-2'>{<Reactive image={appleIcon} name={r.nombre} composition="Líquido" />}</td>
+                                    <td className='mt-2'>{<Reactive image={appleIcon} name={r.nombre} composition="Líquido"/>}</td>
                                     <td style={{textAlign: "center"}}>{<Availability qty={`${r.disponibilidad} ${r.unidad}`} />}</td>
                                     <td style={{textAlign: "center"}}>{<Availability qty={r.proyecto} />}</td>
-                                    <td className='mt-2'>{<Button variant="contained" color="success" onClick={event => handleDisponibilizarModalOpen(r)} sx={{ backgroundColor: "#2c83e8", color:"#000000" }}><ConnectWithoutContactIcon/>Contactar</Button>}</td>
+                                    <td className='mt-2'>{<Button variant="contained" color="success" onClick={event => handleDisponibilizarModalOpen(r)} sx={{ backgroundColor: "#2c83e8", color:"#000000" }}><ConnectWithoutContactIcon/>Reservar</Button>}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -243,7 +258,7 @@ return (
                       textAlign="center"
                     >
                       <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
-                        Contactar
+                        Reservar
                       </MDTypography>
                     </MDBox>
                     <MDBox pt={4} pb={3} px={3}>
@@ -251,9 +266,12 @@ return (
                         <MDBox mb={2}>
                           <TextField variant="standard" label="Ingrese su mail" fullWidth  value={contactarPersona} onChange={handleContactarPersona} />
                         </MDBox>
+                        <MDBox mb={2}>
+                          <TextField variant="standard" label="Ingrese cantidad a reservar" fullWidth  value={cantidadReserva} onChange={handleCantidadReserva} />
+                        </MDBox>
                         <MDBox mt={4} mb={1}>
-                          <MDButton variant="gradient" color="info" fullWidth onClick={handleDisponibilizarSubmit} >
-                            Contactar persona
+                          <MDButton variant="gradient" color="info" fullWidth onClick={handleDisponibilizarSubmit}>
+                            Reservar insumo
                           </MDButton>
                         </MDBox>
                       </MDBox>
