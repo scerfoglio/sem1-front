@@ -244,7 +244,6 @@ function Projects() {
     console.log(message);
 
     let requestBody = {idProyecto: proyectoParam._id, isSolicitud: insumoParam.pendiente._id}
-    /*
     if (isAccepted) {
         fetch(`https://conicet-connect.herokuapp.com/api/insumo/${insumoParam._id}/aceptar`, {
             method: 'post',
@@ -262,7 +261,6 @@ function Projects() {
             body: JSON.stringify(requestBody)
           });
     }
-    */
   }
 
   const handleSnackbarClose = (event, reason) => {
@@ -280,15 +278,24 @@ function Projects() {
     console.log(disponibilizarProyecto);
     console.log(disponibilizarInsumo);
     console.log(disponibilizarCantidad);
-    let disponibilizarPOST = {idProyecto: disponibilizarProyecto._id, idInsumo: disponibilizarInsumo._id, cantidad: disponibilizarCantidad}
+    let disponibilizarPOST = {id_insumo: disponibilizarInsumo._id, cantidad: disponibilizarCantidad}
 
-    // fetch(`https://conicet-connect.herokuapp.com/api/insumo/${insumoParam._id}/rechazar`, {
-    //         method: 'post',
-    //         headers: {
-    //           'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify(disponibilizarPOST)
-    // });
+    if(disponibilizarCantidad < disponibilizarInsumo.cantidad) {
+        setSnackbarMessage(`El insumo ${disponibilizarInsumo.nombre} esta disponible`);
+        setSnackbarStatus("success")
+        setSnackbarOpen(true);
+        fetch(`https://conicet-connect.herokuapp.com/api/proyecto/${disponibilizarProyecto._id}/disponibilizar`, {
+                method: 'post',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(disponibilizarPOST)
+        });
+    } else {
+        setSnackbarMessage(`La cantidad a disponibilizar (${disponibilizarCantidad}) no debe ser mayor a la cantidad disponible (${disponibilizarInsumo.cantidad})`);
+        setSnackbarStatus("error")
+        setSnackbarOpen(true);
+    }
   }
 
 
