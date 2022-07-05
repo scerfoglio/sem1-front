@@ -29,6 +29,7 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import TextField from '@mui/material/TextField';
+import ConnectWithoutContactIcon from '@mui/icons-material/ConnectWithoutContact';
 
 import {Container, Row, Dropdown, DropdownButton, Badge} from "react-bootstrap";
 
@@ -92,7 +93,23 @@ const [tableRows,setTableRows] = React.useState([]);
 const [open, setOpen] = React.useState((false));
 const [reactivos, setReactivos] = React.useState([]);
 const [searchChain, setSearchChain] = React.useState("");
+const handleInsumosModalOpen = (proyecto, usuarios) => {setInsumosModal(true); setInsumosProyecto(proyecto); setInsumosUsuarios(usuarios);};
 
+
+const [disponibilizaModal, setDisponibilizarModal] = React.useState(false);
+const handleDisponibilizarModalOpen = (r) => {setDisponibilizarModal(true); setCurrentRow(r)};
+const handleDisponibilizarModalClose = () => {setDisponibilizarModal(false)};
+const [contactarPersona, setContactarPersona] = React.useState();
+const [cantidadReserva, setCantidadReserva] = React.useState();
+const [currentRow,setCurrentRow] =  React.useState({});
+
+const handleCantidadReserva = (event) => {
+    setCantidadReserva(event.target.value);
+  }
+
+const handleContactarPersona = (event) => {
+    setContactarPersona(event.target.value);
+  }
 
 useEffect(() => {
     loadTable();
@@ -141,65 +158,135 @@ function searchReactivos(){
     setTableRows(aux);
 }
 
+const pedidoChat = (proyecto,persona) =>{
+    console.log("proyecto = " + proyecto);
+    console.log("persona = " + persona);
+}
+
 const handleSearch = (event) => {
     setSearchChain(event.target.value);
 }
+const handleDisponibilizarSubmit = () => {
+    handleDisponibilizarModalClose();
+    let aux = currentRow;
+    aux.correoContacto = contactarPersona;
+    console.log(contactarPersona);
+    console.log(currentRow);
+    console.log(cantidadReserva);
+    console.log(currentRow.idProyecto)
+    
+    let reservar = {idProyecto: aux.idProyecto, cantidad: cantidadReserva, aceptado: false, correo: contactarPersona}
+    
+    fetch(`https://conicet-connect.herokuapp.com/api/insumo/${aux.idProyecto}/reservar`, {  
+            mode: 'cors',
+            method: 'post',
+            headers: {
+               'Content-Type': 'application/json'
+             },
+            body: JSON.stringify(reservar)
+     });
+    
+    pedidoChat(aux.idReactivo, contactarPersona);
+
+    alert("Reserva enviada!");
+  }
 
 
 return (
 <DashboardLayout>
     <DashboardNavbar />
     <MDBox pt={6} pb={30}>
-    <Grid container spacing={6}>
-        <Grid item xs={12}>
-        <Card>
-            <MDBox
-            mx={2}
-            mt={-3}
-            py={3}
-            px={2}
-            variant="gradient"
-            bgColor="info"
-            borderRadius="lg"
-            coloredShadow="info"
-            >
-            <Stack direction="row" spacing={2}>
-                <MDTypography variant="h6" color="white">
-                    Inventario
-                </MDTypography>
-            </Stack>
-            <Stack direction="row-reverse" spacing={2}>
-                <Button variant="contained" color="success" onClick={searchReactivos} >
-                    Buscar Reactivo
-                </Button>
-                <MDBox pr={1}>
-                    <TextField variant="outlined" style={{background: "white"}} fullWidth onChange={handleSearch} />
+        <Grid container spacing={6}>
+            <Grid item xs={12}>
+            <Card>
+                <MDBox
+                mx={2}
+                mt={-3}
+                py={3}
+                px={2}
+                variant="gradient"
+                bgColor="info"
+                borderRadius="lg"
+                coloredShadow="info"
+                >
+                <Stack direction="row" spacing={2}>
+                    <MDTypography variant="h6" color="white">
+                        Inventario
+                    </MDTypography>
+                </Stack>
+                <Stack direction="row-reverse" spacing={2}>
+                    <Button variant="contained" color="success" onClick={searchReactivos} >
+                        Buscar Reactivo
+                    </Button>
+                    <MDBox pr={1}>
+                        <TextField variant="outlined" style={{background: "white"}} fullWidth onChange={handleSearch} />
+                    </MDBox>
+                </Stack>
                 </MDBox>
-            </Stack>
-            </MDBox>
-            <table striped hover className="w-100 m-4">
-                    <thead className='w-100'>
-                        {tableColumns.map((c, i) => (
-                            <th key={i} className=''>{c}</th>
-                        ))}
-                    </thead>
-                    <tbody>
-                        {tableRows.map((r, i) => (
-                            <tr className='mt-2' key={i} >
-                                <td className='mt-2'>{<Reactive image={appleIcon} name={r.nombre} composition="Líquido" />}</td>
-                                <td style={{textAlign: "center"}}>{<Availability qty={`${r.disponibilidad} ${r.unidad}`} />}</td>
-                                <td style={{textAlign: "center"}}>{<Availability qty={r.proyecto} />}</td>
-                                <td className='mt-2'>{<Link to="/chat"><MDTypography variant="caption" color="text" fontWeight="medium">Contactar</MDTypography></Link>}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-        </Card>
+                <table striped hover className="w-100 m-4">
+                        <thead className='w-100'>
+                            {tableColumns.map((c, i) => (
+                                <th key={i} className=''>{c}</th>
+                            ))}
+                        </thead>
+                        <tbody>
+                            {tableRows.map((r, i) => (
+                                <tr className='mt-2' key={i} >
+                                    <td className='mt-2'>{<Reactive image={appleIcon} name={r.nombre} composition="Líquido"/>}</td>
+                                    <td style={{textAlign: "center"}}>{<Availability qty={`${r.disponibilidad} ${r.unidad}`} />}</td>
+                                    <td style={{textAlign: "center"}}>{<Availability qty={r.proyecto} />}</td>
+                                    <td className='mt-2'>{<Button variant="contained" color="success" onClick={event => handleDisponibilizarModalOpen(r)} sx={{ backgroundColor: "#2c83e8", color:"#000000" }}><ConnectWithoutContactIcon/>Reservar</Button>}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+            </Card>
+            </Grid>
         </Grid>
-    </Grid>
+        <Modal open={disponibilizaModal} onClose={handleDisponibilizarModalClose}>
+                <Box sx={style}>
+                  <Card>
+                    <MDBox
+                      variant="gradient"
+                      bgColor="info"
+                      borderRadius="lg"
+                      coloredShadow="success"
+                      mx={2}
+                      mt={-3}
+                      p={3}
+                      mb={1}
+                      textAlign="center"
+                    >
+                      <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
+                        Reservar
+                      </MDTypography>
+                    </MDBox>
+                    <MDBox pt={4} pb={3} px={3}>
+                      <MDBox component="form" role="form">
+                        <MDBox mb={2}>
+                          <TextField variant="standard" label="Ingrese su mail" fullWidth  value={contactarPersona} onChange={handleContactarPersona} />
+                        </MDBox>
+                        <MDBox mb={2}>
+                          <TextField variant="standard" label="Ingrese cantidad a reservar" fullWidth  value={cantidadReserva} onChange={handleCantidadReserva} />
+                        </MDBox>
+                        <MDBox mt={4} mb={1}>
+                          <MDButton variant="gradient" color="info" fullWidth onClick={handleDisponibilizarSubmit}>
+                            Reservar insumo
+                          </MDButton>
+                        </MDBox>
+                      </MDBox>
+                    </MDBox>
+                  </Card>
+               </Box>
+        </Modal>
     </MDBox>
+    <MDBox>
+    </MDBox>
+    
 </DashboardLayout>
 );
 }
 
 export default Users;
+
+
