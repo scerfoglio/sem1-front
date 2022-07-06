@@ -175,9 +175,9 @@ const handleDisponibilizarSubmit = () => {
     console.log(cantidadReserva);
     console.log(currentRow.idProyecto)
     
-    let reservar = {idProyecto: aux.idProyecto, cantidad: cantidadReserva, aceptado: false, correo: contactarPersona}
+    let reservar = {idProyecto: aux.idProyecto, cantidad: cantidadReserva, aceptado: false, solicitante: contactarPersona}
     
-    fetch(`https://conicet-connect.herokuapp.com/api/insumo/${aux.idProyecto}/reservar`, {  
+    fetch(`https://conicet-connect.herokuapp.com/api/insumo/${aux.idReactivo}/reservar`, {  
             mode: 'cors',
             method: 'post',
             headers: {
