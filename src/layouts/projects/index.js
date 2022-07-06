@@ -511,11 +511,11 @@ function Projects() {
                           <Stack direction="row" alignItems="center" justifyContent="space-between">
                                 <Grid container>
                                   <Grid item xs>
-                                    <b>Insumos:</b>
+                                    <b>Reactivos:</b>
                                   </Grid>
                                   <Divider orientation="vertical" flexitem="true" />
                                   <Grid item xs>
-                                    <Button variant="contained" color="success" onClick={() => handleInsumosModalOpen(proyecto._id, proyecto.usuarios)} sx={{ backgroundColor: "#66bb6a", color:"#000000" }}>Agregar Insumo</Button>
+                                    <Button variant="contained" color="success" onClick={() => handleInsumosModalOpen(proyecto._id, proyecto.usuarios)} sx={{ backgroundColor: "#66bb6a", color:"#000000" }}>Agregar Reactivo</Button>
                                   </Grid>
                                 </Grid>
                           </Stack>
