@@ -46,6 +46,7 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
+import Snackbar from '@mui/material/Snackbar';
 
 // Data
 import authorsTableData from "layouts/inventory/data/authorsTableData";
@@ -53,6 +54,12 @@ import authorsTableData from "layouts/inventory/data/authorsTableData";
 //Buscador
 import UnstyledInputBasic from "./buscador";
 import { set } from 'date-fns';
+
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 
 const style = {
@@ -94,6 +101,9 @@ const [open, setOpen] = React.useState((false));
 const [reactivos, setReactivos] = React.useState([]);
 const [searchChain, setSearchChain] = React.useState("");
 const handleInsumosModalOpen = (proyecto, usuarios) => {setInsumosModal(true); setInsumosProyecto(proyecto); setInsumosUsuarios(usuarios);};
+const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+const [snackbarStatus, setSnackbarStatus] = React.useState("");
+const [snackbarMessage, setSnackbarMessage] = React.useState("");
 
 
 const [disponibilizaModal, setDisponibilizarModal] = React.useState(false);
@@ -176,6 +186,10 @@ const handleDisponibilizarSubmit = () => {
     console.log(currentRow.idProyecto)
     
     let reservar = {idProyecto: aux.idProyecto, cantidad: cantidadReserva, aceptado: false, solicitante: contactarPersona}
+
+    setSnackbarMessage("Reserva enviada!");
+    setSnackbarStatus("success")
+    setSnackbarOpen(true);
     
     fetch(`https://conicet-connect.herokuapp.com/api/insumo/${aux.idReactivo}/reservar`, {  
             mode: 'cors',
@@ -187,9 +201,17 @@ const handleDisponibilizarSubmit = () => {
      });
     
     pedidoChat(aux.idReactivo, contactarPersona);
-
-    alert("Reserva enviada!");
   }
+
+const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    console.log(snackbarMessage);
+    setSnackbarStatus("");
+    setSnackbarMessage("");
+    setSnackbarOpen(false);
+}
 
 
 return (
@@ -282,7 +304,16 @@ return (
     </MDBox>
     <MDBox>
     </MDBox>
-    
+    <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbarStatus} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
 </DashboardLayout>
 );
 }
