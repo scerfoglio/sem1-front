@@ -168,22 +168,19 @@ function searchReactivos(){
     setTableRows(aux);
 }
 
-const pedidoChat = (proyecto,persona) =>{
-    console.log("proyecto = " + proyecto);
+const pedidoChat = (reactivo, cantidad, persona, nombre) =>{
+    console.log("proyecto = " + reactivo);
     console.log("persona = " + persona);
+    window.location.href = `/chat/?idReactivo=${reactivo}&cantidad=${cantidad}&correo=${persona}&nombre=${nombre}&nuevo=true`;
 }
 
 const handleSearch = (event) => {
     setSearchChain(event.target.value);
 }
-const handleDisponibilizarSubmit = () => {
+const handleDisponibilizarSubmit = async () => {
     handleDisponibilizarModalClose();
     let aux = currentRow;
     aux.correoContacto = contactarPersona;
-    console.log(contactarPersona);
-    console.log(currentRow);
-    console.log(cantidadReserva);
-    console.log(currentRow.idProyecto)
     
     let reservar = {idProyecto: aux.idProyecto, cantidad: cantidadReserva, aceptado: false, solicitante: contactarPersona}
 
@@ -191,7 +188,7 @@ const handleDisponibilizarSubmit = () => {
     setSnackbarStatus("success")
     setSnackbarOpen(true);
     
-    fetch(`https://conicet-connect.herokuapp.com/api/insumo/${aux.idReactivo}/reservar`, {  
+    await fetch(`https://conicet-connect.herokuapp.com/api/insumo/${aux.idReactivo}/reservar`, {  
             mode: 'cors',
             method: 'post',
             headers: {
@@ -200,7 +197,7 @@ const handleDisponibilizarSubmit = () => {
             body: JSON.stringify(reservar)
      });
     
-    pedidoChat(aux.idReactivo, contactarPersona);
+    pedidoChat(aux.idReactivo, cantidadReserva + " " + aux.unidad, contactarPersona, aux.nombre);
   }
 
 const handleSnackbarClose = (event, reason) => {

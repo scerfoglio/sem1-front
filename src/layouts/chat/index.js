@@ -66,14 +66,46 @@ let database;
 const [message, setMessage] = React.useState("");
 const [messages, setMessages] = React.useState([]);
 
+
+var idReactivo;
+var cantidad;
+var correo;
+var nuevo;
+var nombre;
+
+const [correoGlobal, setCorreoGlobal] = React.useState("");
+const [idReactivoGlobal, setIdReactivoGlobal] = React.useState("");
+
 const handleMessage = (event) => {
     setMessage(event.target.value);
   }
 
 useEffect(() => {
-    initFirebase();
+    init();
 }, []);
 
+function init(){
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+
+    idReactivo = urlParams.get('idReactivo');
+    cantidad = urlParams.get('cantidad');
+    const aux = urlParams.get('correo').replace(/\./g, '--DOT--')
+    correo = aux;
+    nuevo = urlParams.get('nuevo');
+    nombre = urlParams.get('nombre');
+
+    setCorreoGlobal(aux)
+    setIdReactivoGlobal(idReactivo)
+
+    initFirebase();
+
+    if(urlParams.get('nuevo') == "true"){
+        sendInitialMessage();
+    }
+  
+    
+}
 
 function initFirebase(){
     // TODO: Add SDKs for Firebase products that you want to use
@@ -100,24 +132,52 @@ function initFirebase(){
 
 function sendMessage(){
     const db = getDatabase();
-    set(ref(db, 'chat/' + (+new Date)), {
-        text: message
+    set(ref(db, `chat/${idReactivoGlobal}/${correoGlobal}/${(+new Date)}`), {
+        text: message,
+        remitente: correoGlobal
     });
+    document.getElementById("messageText").value = "";
+}
+
+function sendInitialMessage(){
+    const db = getDatabase();
+    set(ref(db, `chat/${idReactivo}/${correo}/${(+new Date)}`), {
+        text: `${correo} ha solicitado ${cantidad} de ${nombre}`,
+        remitente: correo
+});
     document.getElementById("messageText").value = "";
 }
 
 function receiveMessages(){
     const db = getDatabase();
-    const starCountRef = ref(db, 'chat/');
+    const starCountRef = ref(db, `chat/${idReactivo}/${correo}/`);
     onValue(starCountRef, (snapshot) => {
         const data = snapshot.val();
-        console.log(data);
         let aux = [];
+        let aux2 = "";
         Object.keys(data).forEach((key) => {
-            aux.push({[key]: data[key]});
+            aux2 = data[key].text.replace("--DOT--", '.');
+            aux.push({[key]: {text: aux2, remitente: data[key].remitente}});
           });
+          console.log(aux)
         setMessages(aux);
     });
+}
+
+const bubble = (r) => {
+    const text = r[Object.keys(r)[0]].text
+    const remitente = r[Object.keys(r)[0]].remitente
+
+    console.log(remitente)
+    console.log(correoGlobal)
+    if(remitente == correoGlobal){
+        //Soy yo
+        console.log("atr")
+        return <div className='row'><div className='col-6'></div><div className='col-6'><p className='p-2' style={{textAlign:"right", background: "#E1E1E1", borderRadius: 10}}>{text}</p></div></div>
+    }else{
+        return <div className='row'><div className='col-6'><p className='p-2' style={{textAlign:"left", background: "#E1E1E1", borderRadius: 10}}>{text}</p></div></div>
+    }
+    
 }
 
 
@@ -151,7 +211,7 @@ return (
             </MDBox>
             <Row className='m-4'>
                 {messages.map((r, i) => (
-                    <p>{r[Object.keys(r)[0]].text}</p>
+                    <div>{bubble(r)}</div>
                 ))}
                 <Col>
                     <TextField variant="standard" id="messageText" label="Mensaje" fullWidth onChange={handleMessage} />

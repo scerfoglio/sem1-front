@@ -273,6 +273,10 @@ function Projects() {
     setSnackbarOpen(false);
   }
 
+  const openChat = (reactivo, cantidad, persona, nombre) => {
+    window.location.href = `/chat/?idReactivo=${reactivo}&cantidad=${cantidad}&correo=${persona}&nombre=${nombre}&nuevo=false`;
+  }
+
   const handleDisponibilizarSubmit = () => {
     handleDisponibilizarModalClose();
     console.log(disponibilizarProyecto);
@@ -541,6 +545,7 @@ function Projects() {
                                           <Stack direction="row" spacing={2}>
                                             <Button variant="contained" color="success" onClick={() => handleSnackBar(proyecto, insumo, true, `Pedido por ${insumo.pendiente.cantidad}${insumo.unidad} de ${insumo.nombre} aceptado`)} sx={{ backgroundColor: "#66bb6a", color:"#000000" }}>Aceptar</Button>
                                             <Button variant="contained" color="error" onClick={() => handleSnackBar(proyecto, insumo, false, `Pedido por ${insumo.pendiente.cantidad}${insumo.unidad} de ${insumo.nombre} rechazado`)} sx={{ backgroundColor: "#ff0000", color:"#000000" }}>Rechazar</Button>
+                                            <Button variant="contained" color="error" onClick={() => openChat(insumo._id, insumo.cantidad + " " + insumo.unidad, insumo.pendiente.solicitante, insumo.nombre)} sx={{ backgroundColor: "#2c83e8", color:"#000000" }}>Ver</Button>
                                             <Typography>Solicitud por {insumo.pendiente.cantidad}{insumo.unidad}</Typography>
                                           </Stack> : 
                                           <Button variant="contained" color="success" onClick={() => handleDisponibilizarModalOpen(proyecto, insumo)} sx={{ backgroundColor: "#2c83e8", color:"#000000" }}><ShoppingCartIcon/> Disponibilizar</Button>

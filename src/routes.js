@@ -78,10 +78,10 @@ const routes = [
     component: <Inventory />,
   },
   {
-    type: "collapse",
+    type: "title",
     name: "Chat",
     key: "chat",
-    icon: <Icon fontSize="small">vaccines</Icon>,
+    icon: '',
     route: "/chat",
     component: <Chat />,
   },
