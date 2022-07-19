@@ -249,14 +249,15 @@ return (
                             ))}
                         </thead>
                         <tbody>
-                            {tableRows.map((r, i) => (
+                            {tableRows.map((r, i) => {
+                                return (r.disponibilidad > 0) &&
                                 <tr className='mt-2' key={i} >
                                     <td className='mt-2'>{<Reactive image={appleIcon} name={r.nombre} composition="Líquido"/>}</td>
                                     <td style={{textAlign: "center"}}>{<Availability qty={`${r.disponibilidad} ${r.unidad}`} />}</td>
                                     <td style={{textAlign: "center"}}>{<Availability qty={r.proyecto} />}</td>
                                     <td className='mt-2'>{<Button variant="contained" color="success" onClick={event => handleDisponibilizarModalOpen(r)} sx={{ backgroundColor: "#2c83e8", color:"#000000" }}><ConnectWithoutContactIcon/>Reservar</Button>}</td>
                                 </tr>
-                            ))}
+                            })}
                         </tbody>
                     </table>
             </Card>

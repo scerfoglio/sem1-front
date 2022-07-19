@@ -61,7 +61,6 @@ import DataTable from "examples/Tables/DataTable";
 // Data
 import projectsTableData from "layouts/projects/data/projectsTableData";
 import { AccordionDetails, AccordionSummary, Paper, TableContainer, Table, TableBody, TableHead, TableCell, TableRow } from '@mui/material';
-import { ConstructionOutlined } from '@mui/icons-material';
 
 import MuiAlert from '@mui/material/Alert';
 
@@ -317,7 +316,7 @@ function Projects() {
         insumos: []
     }
 
-    setProyectos([...proyectos, proyecto]);
+    // setProyectos([...proyectos, proyecto]);
     handleClose();
 
     fetch("https://conicet-connect.herokuapp.com/api/proyecto", {
@@ -327,7 +326,9 @@ function Projects() {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(proyecto)
-    }).then(response => window.location.reload(true))
+    })
+    .then(response => response.json())
+    .then(data => setProyectos([...proyectos, data.proyecto]));
   }
 
   
@@ -341,11 +342,9 @@ function Projects() {
       },
       body: JSON.stringify(insumoPOST)
     });
-    let insumo = {nombre: insumosNombre, cantidad: insumosCantidad, unidad: insumosUnidad, responsable: insumosUsuarioResponsable, pendiente: {}};
-    let proyectoAAgregar = JSON.parse(JSON.stringify(proyectos.find(proyecto => proyecto._id === insumosProyecto)));
-    proyectoAAgregar.insumos.push(insumo)
+    const data = await response.json();
     const updatedProyectos = proyectos.map(proyecto => {
-      if (proyecto._id === proyectoAAgregar._id) { return proyectoAAgregar; }
+      if (proyecto._id === data.proyecto._id) { return data.proyecto; }
       return proyecto;
     })
     setProyectos(updatedProyectos);
