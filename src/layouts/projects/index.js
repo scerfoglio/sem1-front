@@ -243,7 +243,7 @@ function Projects() {
     console.log(isAccepted);
     console.log(message);
 
-    let requestBody = {idProyecto: proyectoParam._id, isSolicitud: insumoParam.pendiente._id}
+    let requestBody = {idProyecto: proyectoParam._id, idSolicitud: insumoParam.pendiente._id}
     if (isAccepted) {
         fetch(`https://conicet-connect.herokuapp.com/api/insumo/${insumoParam._id}/aceptar`, {
             method: 'post',
@@ -327,7 +327,7 @@ function Projects() {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(proyecto)
-    })
+    }).then(response => window.location.reload(true))
   }
 
   
