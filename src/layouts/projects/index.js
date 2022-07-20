@@ -514,7 +514,7 @@ function Projects() {
                           <Stack direction="row" alignItems="center" justifyContent="space-between">
                                 <Grid container>
                                   <Grid item xs>
-                                    <b>Reactivos:</b>
+                                    <b style={{ 'font-size': '20px' }}>Reactivos:</b>
                                   </Grid>
                                   <Divider orientation="vertical" flexitem="true" />
                                   <Grid item xs>
@@ -542,10 +542,10 @@ function Projects() {
                                       <TableCell>
                                       {(insumo.pendiente && !insumo.pendiente.aceptado && insumo.pendiente.solicitado) ? 
                                           <Stack direction="row" spacing={2}>
-                                            <Button variant="contained" color="success" onClick={() => handleSnackBar(proyecto, insumo, true, `Pedido por ${insumo.pendiente.cantidad}${insumo.unidad} de ${insumo.nombre} aceptado`)} sx={{ backgroundColor: "#66bb6a", color:"#000000" }}>Aceptar</Button>
-                                            <Button variant="contained" color="error" onClick={() => handleSnackBar(proyecto, insumo, false, `Pedido por ${insumo.pendiente.cantidad}${insumo.unidad} de ${insumo.nombre} rechazado`)} sx={{ backgroundColor: "#ff0000", color:"#000000" }}>Rechazar</Button>
+                                            <Button variant="contained" color="success" onClick={() => handleSnackBar(proyecto, insumo, true, `Pedido por ${insumo.pendiente.cantidad} ${insumo.unidad} de ${insumo.nombre} aceptado`)} sx={{ backgroundColor: "#66bb6a", color:"#000000" }}>Aceptar</Button>
+                                            <Button variant="contained" color="error" onClick={() => handleSnackBar(proyecto, insumo, false, `Pedido por ${insumo.pendiente.cantidad} ${insumo.unidad} de ${insumo.nombre} rechazado`)} sx={{ backgroundColor: "#ff0000", color:"#000000" }}>Rechazar</Button>
                                             <Button variant="contained" color="error" onClick={() => openChat(insumo._id, insumo.cantidad + " " + insumo.unidad, insumo.pendiente.solicitante, insumo.nombre)} sx={{ backgroundColor: "#2c83e8", color:"#000000" }}>Ver</Button>
-                                            <Typography>Solicitud por {insumo.pendiente.cantidad}{insumo.unidad}</Typography>
+                                            <Typography>Solicitud por {insumo.pendiente.cantidad} {insumo.unidad}</Typography>
                                           </Stack> : 
                                           <Button variant="contained" color="success" onClick={() => handleDisponibilizarModalOpen(proyecto, insumo)} sx={{ backgroundColor: "#2c83e8", color:"#000000" }}><ShoppingCartIcon/> Disponibilizar</Button>
                                         }
